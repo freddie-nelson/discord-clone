@@ -2,9 +2,9 @@
   <main id="add-friend">
     <div class="top">
       <h1 class="title">ADD FRIEND</h1>
-      <button class="close">
-        <img src="../../assets/plus.svg" alt="">
-      </button>
+      <router-link to="/friends" class="close">
+        <img src="../assets/plus.svg" alt="">
+      </router-link>
     </div>
     <p>You can add a friend with their Discord Tag. It's cAsE sEnSitIvE!</p>
     <form class="input" @submit.prevent>

@@ -1,6 +1,6 @@
 <template>
   <main id="friends">
-    <h2 class="count">FRIENDS - 10</h2>
+    <h2 class="count">FRIENDS - {{ friends.length }}</h2>
     <div class="friend-list">
       <FriendButton v-for="friend in friends" :key="friend.id" :friend="friend" />
     </div>
@@ -17,7 +17,7 @@ export default {
   },
   data() {
     return {
-      friends: [{name: "John Doe", id: "laskjdfsdafjkh"}]
+      friends: [{name: "John Doe", hash: 1358, id: "laskjdfsdafjkh"}]
     }
   }
 }

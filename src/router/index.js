@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Friends  from '../views/Friends/TheFriends';
+import AddFriend from "../views/TheAddFriend";
 import Chat from "../views/Chat/TheChat";
 import Auth from "../views/Auth/TheAuth";
 
@@ -16,6 +17,11 @@ const routes = [
     path: "/friends",
     name: "Friends",
     component: Friends,
+  },
+  {
+    path: "/add-friend",
+    name: "AddFriend",
+    component: AddFriend
   },
   {
     path: "/chat",

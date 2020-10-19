@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <ServerList />
-    <ChannelList />
+    <ChatList />
     <div id="main">
       <Titlebar :view="view" :title="title" />
       <router-view />
@@ -16,14 +16,14 @@
 
 <script>
 import ServerList from "./components/Server/TheServerList";
-import ChannelList from "./components/ChannelList/TheChannelList";
+import ChatList from "./components/ChatList/TheChatList";
 import Titlebar from "./components/TheTitlebar";
 
 export default {
   name: 'App',
   components: {
     ServerList,
-    ChannelList,
+    ChatList,
     Titlebar
   },
   data() {

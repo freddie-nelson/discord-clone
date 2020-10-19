@@ -1,10 +1,11 @@
 <template>
-  <button
+  <router-link
     class="view-btn"
     :class="{ active }"
-    @click="$emit('click', dm.id || type)"
-    @mouseenter="hover = true"
-    @mouseleave="hover = false"
+    @click.native="$emit('click', dm.id || type)"
+    @mouseenter.native="hover = true"
+    @mouseleave.native="hover = false"
+    :to="'/' + (dm.name ? 'chat' : type)"
   >
     <div class="container">
       <svg
@@ -63,7 +64,7 @@
     <transition name="slide">
       <div v-if="hover || active" class="bar" />
     </transition>
-  </button>
+  </router-link>
 </template>
 
 <script>
@@ -134,6 +135,8 @@ export default {
     height: 24px;
     margin-right: 14px;
     color: #008ae6;
+    text-align: center;
+    vertical-align: center;
   }
 
   h1 {

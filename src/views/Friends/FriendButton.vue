@@ -6,7 +6,7 @@
         <h3 class="name">{{ friend.name }}<span class="hash">#{{ friend.hash }}</span></h3>
       </div>
       <div class="buttons">
-        <button class="message">
+        <button class="message" @click="$router.push({ name: 'Chat' })">
           <svg width="24" height="24" fill="none"><path fill="currentColor" d="M4.79805 3c-.9936 0-1.8.8055-1.8 1.8v10.8c0 .9936.8064 1.8 1.8 1.8h2.7V21l3.59995-3.6h8.1c.9945 0 1.8-.8064 1.8-1.8V4.8c0-.9945-.8055-1.8-1.8-1.8H4.79805z"/></svg>
         </button>
         <button class="more">
@@ -20,7 +20,7 @@
 <script>
 export default {
   name: "FriendButton",
-  prop: {
+  props: {
     friend: {
       type: Object,
       default() {
