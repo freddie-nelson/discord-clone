@@ -1,0 +1,65 @@
+version: '3'
+
+services:
+  mustap-node:
+    container_name: mustap-main-server
+    hostname: mustap-node
+    restart: always
+    build: .
+    environment:
+      NODE_ENV: production
+      TOKEN_SECRET: d-bk8-fS4NN#srSDNS(npAT(7ZZvcB2e\K[UG.eTb#}kzdMBN=%s"M%T~j6rywy-
+    ports:
+      - "3000:3000"
+    links:
+      - mongo
+  mongo:
+    container_name: mustap-mongodb
+    restart: always
+    image: mongo
+    environment:
+      - MONGO_INITDB_DATABASE=mustap
+    volumes:
+      - ./mongo/db:/data/db
+      - ./mongo/setup:/docker-entrypoint-initdb.d/
+    ports:
+      - "3001:27017"
+    command: [--auth]
+  # nginx:
+  #   container_name: mustap-nginx
+  #   restart: always
+  #   image: nginx:1.19-alpine
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./nginx/config:/etc/nginx/conf.d
+  #   networks:
+  #     - mustap-network
+  #   depends_on:
+  #     - main-server
+  letsencrypt:
+    image: linuxserver/letsencrypt
+    container_name: mustap-nginx
+    restart: always
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+      - URL=mustap.me
+      - SUBDOMAINS=api,
+      - VALIDATION=http
+      - EMAIL=contact@mustap.me #optional
+      - ONLY_SUBDOMAINS=true #optional
+    volumes:
+      - ./nginx/config:/config/nginx
+    ports:
+      - "443:443"
+      - "80:80"
+    restart: unless-stopped
+    depends_on:
+      - mustap-node
+    links: 
+      - mustap-node
+    
