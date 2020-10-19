@@ -31,6 +31,26 @@ export default {
       view: "friends",
       title: "Friends"
     }
+  },
+  mounted() {
+    const io = require("socket.io-client");
+    const socket = io("http://localhost:3000/")
+
+    socket.on("connect", () => {
+      console.log("connected to socket")
+    })
+
+    socket.on("authenticated", data => {
+      this.$store.commit("SET_USER", data);
+
+      if (this.$route.name !== "Friends") {
+        this.$router.push({ name: "Friends" })
+      }
+    })
+
+    socket.on("disconnect", () => {
+      console.log("disconnected from socket");
+    })
   }
 }
 </script>
