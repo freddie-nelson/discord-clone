@@ -14,11 +14,13 @@
     "sass-loader": "^10.0.3",
     "timeago.js": "^4.0.2",
     "vue": "^2.6.11",
-    "vue-icon": "^2.1.2"
+    "vue-icon": "^2.1.2",
+    "vue-router": "^3.2.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",

@@ -12,7 +12,7 @@
         </div>
         <div class="dm-heading">
           <p class="title">DIRECT MESSAGES</p>
-          <button><img src="../assets/plus.svg" alt=""></button>
+          <button><img src="../../assets/plus.svg" alt=""></button>
         </div>
         <div class="dm-list">
           <ViewButton v-for="dm in dms" :key="dm.id" type="dm" :active="activeDm === dm.id" :dm="dm" @click="changeView" />

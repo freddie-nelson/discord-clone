@@ -4,24 +4,27 @@
     <ChannelList />
     <div id="main">
       <Titlebar :view="view" :title="title" />
-      <Chat />
+      <router-view />
     </div>
+    <!-- <div class="modal-container">
+      <div class="modal">
+
+      </div>
+    </div> -->
   </div>
 </template>
 
 <script>
-import ServerList from "./components/TheServerList";
-import ChannelList from "./components/TheChannelList";
+import ServerList from "./components/Server/TheServerList";
+import ChannelList from "./components/ChannelList/TheChannelList";
 import Titlebar from "./components/TheTitlebar";
-import Chat from "./components/TheChat";
 
 export default {
   name: 'App',
   components: {
     ServerList,
     ChannelList,
-    Titlebar,
-    Chat
+    Titlebar
   },
   data() {
     return {
@@ -32,7 +35,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 /* Whitney font face to match Discord */
 @font-face {
     font-family: Whitney;
@@ -77,5 +80,22 @@ div#main {
   width: calc(100vw - 297px);
   height: 100%;
   background-color: #181C25;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  background: rgba(0, 0, 0, 0.3);
+
+  .modal {
+    width: 60%;
+    height: 50%;
+  }
 }
 </style>

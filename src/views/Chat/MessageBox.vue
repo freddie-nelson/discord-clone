@@ -4,7 +4,7 @@
       <input ref="fileInput" type="file" class="file" />
       <button class="file-btn" @click="$refs.fileInput.click()">
         <div class="icon">
-          <img src="../assets/plus.svg" alt="">
+          <img src="../../assets/plus.svg" alt="">
         </div>
       </button>
       <input 

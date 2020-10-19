@@ -2,8 +2,8 @@
   <button class="button" @mouseenter="$emit('hover', [$event, home ? 'Home' : server.name || 'Add a Server'])" @mouseleave="$emit('leave')">
         <div class="bar"></div>
         <div class="button__icon" :style="{ transform: home ? 'scale(1.07)' : null, backgroundColor: add ? '#12151C' : null }">
-            <img v-if="home" src="../assets/home.svg" alt="">
-            <img v-else-if="add" src="../assets/plus.svg" class="add" alt="">
+            <img v-if="home" src="../../assets/home.svg" alt="">
+            <img v-else-if="add" src="../../assets/plus.svg" class="add" alt="">
             <img v-else :src="server.icon" alt="">
         </div>
     </button>
