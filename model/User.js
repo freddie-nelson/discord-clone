@@ -4,14 +4,14 @@ const userSchema = new mongoose.Schema({
     userId: {
         type: String,
         required: true,
-        min: 36,
-        max: 36
+        min: 16,
+        max: 16
     },
-    displayName: {
+    username: {
         type: String,
         required: true,
         min: 1,
-        max: 64
+        max: 28
     },
     email: {
         type: String,
@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         min: 6,
-        max: 1024
+        max: 256
     }
 })
 

@@ -27,11 +27,11 @@ router.post("/register", async (req, res) => {
     });
 
   if (emailExists === true) {
-    return res.send("User with that email already exists.");
+    return res.status(409).send("User with that email already exists.");
   } else if (emailExists === "error") {
     return res
       .status(500)
-      .send("Internal Server Error: Could not register user.");;
+      .send("Could not register user at this time.");;
   }
 
   // Hash password
@@ -40,17 +40,17 @@ router.post("/register", async (req, res) => {
 
   // Save user in db
   const user = new User({
-    userId: uuid(),
-    displayName: req.body.email.split("@")[0],
+    userId: uuid().slice(0, 16),
+    username: req.body.username,
     email: req.body.email,
     password: hashedPassword
   });
 
   try {
     user.save();
-    res.send("User registered!");
+    res.status(201).send("Account created successfully.");
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).send("Internal server error occurred.");
   }
 });
 
@@ -61,12 +61,12 @@ router.post("/login", async (req, res) => {
       if (doc) {
         return doc;
       } else {
-        res.status(400).send("user not found");
+        res.status(404).send("User not found.");
         return null;
       }
     })
     .catch(err => {
-      res.status(500).send(err);
+      res.status(500).send("Internal server error.");
       return "error";
     })
 
@@ -76,7 +76,7 @@ router.post("/login", async (req, res) => {
     const comparePasswords = await bcrypt
       .compare(req.body.password, document.password)
       .catch(() => {
-        res.status(500).send("internal server error");
+        res.status(500).send("Internal server error.");
         return false;
       });
 
@@ -86,10 +86,15 @@ router.post("/login", async (req, res) => {
         process.env.TOKEN_SECRET
       );
 
-      res.cookie("token", token, { httpOnly: true, secure: process.env.NODE_ENV === "production" ? true : false });
-      return res.send("logged in");
+      res.cookie("token", token, {
+        expires: new Date(Date.now() + 1209600000),
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production" ? true : false,
+      });
+
+      return res.status(200).send("Successfully signed in.");
     } else {
-      return res.send("password incorrect");
+      return res.status(401).send("Details incorrect.");
     }
   }
 });
