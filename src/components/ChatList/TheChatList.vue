@@ -20,10 +20,10 @@
       </div>
     </div>
     <div class="profile">
-        <div class="icon">J</div>
-        <div class="details">
-          <h2 class="name">John Doe</h2>
-          <h2 class="hash">#6235</h2>
+        <div class="icon">{{ user.username ? user.username[0] : "" }}</div>
+        <div class="details" @click="copyUsername" :class="{ showTooltip }">
+          <h2 class="name">{{ user.username }} </h2>
+          <h2 class="hash">#{{ user.hash }}</h2>
         </div>
         <div class="buttons">
           <button class="settings">
@@ -48,13 +48,19 @@ export default {
   components: {
     ViewButton
   },
+  computed: {
+    user() {
+      return this.$store.state.user
+    }
+  },
   data() {
     return {
       friends: true,
       library: false,
       nitro: false,
       activeDm: "",
-      dms: [{ name: "John Doe", id: "salfasdufh48950" }]
+      dms: [],
+      showTooltip: false
     }
   },
   methods: {
@@ -68,6 +74,14 @@ export default {
         this[type] = true;
       else
         this.activeDm = type;
+    },
+    copyUsername() {
+      if (!this.showTooltip) {
+        navigator.clipboard.writeText(this.user.username + "#" + this.user.hash);
+        this.showTooltip = true;
+
+        setTimeout(() => this.showTooltip = false, 2000);
+      }
     }
   }
 };
@@ -123,7 +137,30 @@ export default {
 
     .details {
       margin-top: 2px;
-      cursor: pointer;
+      position: relative;
+
+      &::before {
+        content: "Copied!";
+        position: absolute;
+        padding: 5px;
+        border-radius: 3px;
+        top: -38px;
+        left: 8px;
+        background-color: #17AB84;
+        font-size: .9em;
+        font-weight: bold;
+        opacity: 0;
+        transition: opacity .2s ease;
+        user-select: none;
+      }
+
+      &.showTooltip::before {
+        opacity: 1;
+      }
+      
+      h2 {
+        cursor: pointer;
+      }
     }
 
     .name {

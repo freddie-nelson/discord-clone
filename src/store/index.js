@@ -10,6 +10,11 @@ export default new Vuex.Store({
   mutations: {
     SET_USER(state, payload) {
       state.user = payload;
+    },
+    ADD_FRIEND_REQUEST(state, payload) {
+      const user = { ...state.user };
+      user.friendRequests.push(payload);
+      state.user = user;
     }
   },
   actions: {},

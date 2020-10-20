@@ -56,6 +56,15 @@ export default {
     async registerUser() {
       const user = this.user
 
+      if (!this.user.username.match(/^(.+?)/)) {
+        this.response = {
+          message: "Invalid username: Username must only contain alpha numeric characters.",
+          code: 400
+        }
+
+        return
+      }
+
       const res = await fetch("/auth/register", {
         method: "POST",
         mode: "cors",
@@ -75,6 +84,10 @@ export default {
       }
 
       this.responseRecieved = true;
+
+      if (res.status === 201) {
+        this.signInUser();
+      }
     },
     async signInUser() {
       const user = {
@@ -94,8 +107,6 @@ export default {
       .catch(e => console.log(e))
       
       const text = await res.text();
-
-      console.log(res.headers)
       
       this.response = {
         message: text,
@@ -103,6 +114,10 @@ export default {
       }
 
       this.responseRecieved = true;
+
+      if (res.status === 200) {
+        window.location.assign(window.location.origin)
+      }
     },
     switchView() {
       this.user = {

@@ -9,12 +9,12 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: "/",
+    path: "/login",
     name: "Auth",
     component: Auth
   },
   {
-    path: "/friends",
+    path: "/",
     name: "Friends",
     component: Friends,
   },
@@ -31,6 +31,7 @@ const routes = [
 ];
 
 const router = new VueRouter({
+  mode: "history",
   routes
 })
 

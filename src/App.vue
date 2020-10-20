@@ -32,15 +32,24 @@ export default {
       title: "Friends"
     }
   },
-  mounted() {
+  beforeMount() {
     const io = require("socket.io-client");
     const socket = io("http://localhost:3000/")
 
+    this.$store.state.socket = socket;
+
+    // connect and disconnect events
     socket.on("connect", () => {
       console.log("connected to socket")
     })
 
+    socket.on("disconnect", () => {
+      console.log("disconnected from socket");
+    })
+
+    // Authentication events
     socket.on("authenticated", data => {
+      console.log("authenticated");
       this.$store.commit("SET_USER", data);
 
       if (this.$route.name !== "Friends") {
@@ -48,8 +57,16 @@ export default {
       }
     })
 
-    socket.on("disconnect", () => {
-      console.log("disconnected from socket");
+    socket.on("not-authenticated", () => {
+      if (this.$route.name !== "Auth") {
+        this.$router.push({ name: "Auth" })
+      }
+    })
+
+    // Friend events
+    socket.on("friend-request", data => {
+      console.log("friend-request");
+      this.$store.commit("ADD_FRIEND_REQUEST", data);
     })
   }
 }

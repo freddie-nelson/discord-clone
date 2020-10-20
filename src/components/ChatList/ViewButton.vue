@@ -5,7 +5,7 @@
     @click.native="$emit('click', dm.id || type)"
     @mouseenter.native="hover = true"
     @mouseleave.native="hover = false"
-    :to="'/' + (dm.name ? 'chat' : type)"
+    :to="'/' + (dm.name ? 'chat' : type === 'friends' ? '' : type)"
   >
     <div class="container">
       <svg
