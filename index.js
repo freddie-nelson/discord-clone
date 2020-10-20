@@ -166,6 +166,46 @@ io.on("connection", async socket => {
     }
   })
 
+  // Answer friend request
+  socket.on("answer-friend-request", async ({ userId, accept }) => {
+    const tokenData = validateToken(socket.client.request);
+
+    if (tokenData === false) {
+      socket.emit("invalid-token");
+      return;
+    }
+
+    if (accept) {
+      const user = await User.findOne({ userId })
+        .then((doc) => {
+          if (doc) {
+            return doc;
+          } else {
+            return null;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+        
+
+      if (friend) {
+        const user = await User.findOne({ userId: tokenData.userId })
+          .then((doc) => {
+            if (doc) {
+              return doc;
+            } else {
+              return null;
+            }
+          })
+          .catch((err) => {
+            console.log(error);
+          });
+      }
+    }
+  })
+
   socket.on("disconnect", async () => {
     console.log("user disconnected");
   });
