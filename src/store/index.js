@@ -13,7 +13,7 @@ export default new Vuex.Store({
     },
     ADD_FRIEND_REQUEST(state, payload) {
       const user = { ...state.user };
-      user.friendRequests.push(payload);
+      user.friendRequests[payload.userId] = payload;
       state.user = user;
     }
   },

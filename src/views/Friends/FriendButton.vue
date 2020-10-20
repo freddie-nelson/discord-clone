@@ -1,16 +1,18 @@
 <template>
   <div class="friend-container">
     <div class="friend">
-      <div class="icon">{{ friend.name[0] }}</div>
+      <div class="icon">{{ friend.username[0] }}</div>
       <div class="details">
-        <h3 class="name">{{ friend.name }}<span class="hash">#{{ friend.hash }}</span></h3>
+        <h3 class="name">{{ friend.username }}<span class="hash">#{{ friend.hash }}</span></h3>
       </div>
       <div class="buttons">
-        <button class="message" @click="$router.push({ name: 'Chat' })">
-          <svg width="24" height="24" fill="none"><path fill="currentColor" d="M4.79805 3c-.9936 0-1.8.8055-1.8 1.8v10.8c0 .9936.8064 1.8 1.8 1.8h2.7V21l3.59995-3.6h8.1c.9945 0 1.8-.8064 1.8-1.8V4.8c0-.9945-.8055-1.8-1.8-1.8H4.79805z"/></svg>
+        <button class="message" @click="request ? $emit('request', { friend, accept: true }) : $emit('open-chat', friend)">
+          <svg v-if="!request" width="24" height="24" fill="none"><path fill="currentColor" d="M4.79805 3c-.9936 0-1.8.8055-1.8 1.8v10.8c0 .9936.8064 1.8 1.8 1.8h2.7V21l3.59995-3.6h8.1c.9945 0 1.8-.8064 1.8-1.8V4.8c0-.9945-.8055-1.8-1.8-1.8H4.79805z"/></svg>
+          <svg v-else width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M8.99991 16.17L4.82991 12L3.40991 13.41L8.99991 19L20.9999 7.00003L19.5899 5.59003L8.99991 16.17Z"></path></svg>
         </button>
-        <button class="more">
-          <svg width="24" height="24"><g fill="none" fill-rule="evenodd"><path d="M24 0v24H0V0z"/><path fill="currentColor" d="M12 16c1.1045695 0 2 .8954305 2 2s-.8954305 2-2 2-2-.8954305-2-2 .8954305-2 2-2zm0-6c1.1045695 0 2 .8954305 2 2s-.8954305 2-2 2-2-.8954305-2-2 .8954305-2 2-2zm0-6c1.1045695 0 2 .8954305 2 2s-.8954305 2-2 2-2-.8954305-2-2 .8954305-2 2-2z"/></g></svg>
+        <button class="more" @click="request ? $emit('request', { friend, accept: false }) : null">
+          <svg v-if="!request" width="24" height="24"><g fill="none" fill-rule="evenodd"><path d="M24 0v24H0V0z"/><path fill="currentColor" d="M12 16c1.1045695 0 2 .8954305 2 2s-.8954305 2-2 2-2-.8954305-2-2 .8954305-2 2-2zm0-6c1.1045695 0 2 .8954305 2 2s-.8954305 2-2 2-2-.8954305-2-2 .8954305-2 2-2zm0-6c1.1045695 0 2 .8954305 2 2s-.8954305 2-2 2-2-.8954305-2-2 .8954305-2 2-2z"/></g></svg>
+          <img src="../../assets/plus.svg" style="filter: brightness(5); opacity: 0.6; transform: rotate(45deg)" alt="">
         </button>
       </div>
     </div>
@@ -26,6 +28,10 @@ export default {
       default() {
         return {}
       }
+    },
+    request: {
+      type: Boolean,
+      default: false
     }
   }
 }
@@ -117,6 +123,11 @@ export default {
       align-items: center;
       justify-content: center;
       outline: none;
+      transition: filter .2s ease;
+
+      &:hover {
+        filter: brightness(2);
+      }
 
       svg {
         transform: scale(.85);

@@ -1,8 +1,17 @@
 <template>
-  <main v-if="friends.length > 0" id="friends">
-    <h2 class="count">FRIENDS - {{ friends.length }}</h2>
-    <div class="friend-list">
-      <FriendButton v-for="friend in friends" :key="friend.id" :friend="friend" />
+  <main v-if="friends.length !== 0 || friendRequests.length !== 0" id="friends">
+    <div v-if="friends.length !== 0">
+      <h2 class="count">FRIENDS - {{ friends.length }}</h2>
+      <div class="friend-list">
+        <FriendButton v-for="friend in friends" :key="friend.id" :friend="friend" @open-chat="openChat" />
+      </div>
+    </div>
+
+    <div v-if="friendRequests.length !== 0">
+      <h2 class="count">REQUESTS - {{ friendRequests.length }}</h2>
+      <div class="friend-list">
+        <FriendButton v-for="friend in friendRequests" :key="friend.id" :friend="friend" :request="true" @request="answerRequest" />
+      </div>
     </div>
   </main>
 
@@ -23,6 +32,26 @@ export default {
   computed: {
     friends() {
       return this.$store.state.user.friends || [];
+    },
+    friendRequests() {
+      const reqs = this.$store.state.user.friendRequests;
+      const arr = [];
+
+      for (const key in reqs) {
+        if (Object.prototype.hasOwnProperty.call(reqs, key)) {
+          arr.push(reqs[key]);
+        }
+      }
+
+      return arr;
+    }
+  },
+  methods: {
+    answerRequest(answer) {
+      this.$store.state.socket.emit("answer-friend-request", { userId: answer.userId, accept: answer.accept })
+    },
+    openChat(e) {
+      console.log(e);
     }
   }
 }
