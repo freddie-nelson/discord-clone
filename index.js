@@ -128,30 +128,26 @@ io.on("connection", async socket => {
 
       if (user) {
         // check if friend already has a request from user
-        for (const request of friend.friendRequests) {
-          if (request.userId === user.userId) {
-            socket.emit("add-friend-response", { error: true, message: "User already has a friend request from you." })
-            return;
-          }
+        if (friend.friendRequests[user.userId]) {
+          socket.emit("add-friend-response", { error: true, message: "User already has a friend request from you." })
+          return;
         }
         
         // check if user already has a request from friend
-        for (const request of user.friendRequests) {
-          if (request.userId === friend.userId) {
-            socket.emit("add-friend-response", { error: true, message: "You already have a friend request from this user." })
-            return;
-          }
+        if (user.friendRequests[friend.userId]) {
+          socket.emit("add-friend-response", { error: true, message: "You already have a friend request from this user." })
+          return;
         }
 
-        friend.friendRequests.push({
+        friend.friendRequests[user.userId] = {
           username: user.username,
           hash: user.hash,
           userId: user.userId
-        });
+        };
 
         // send alert to friend if they are online
         if (friend.socketId) {
-          io.to(friend.socketId).emit("friend-request", friend.friendRequests[friend.friendRequests.length - 1]);  
+          io.to(friend.socketId).emit("friend-request", friend.friendRequests[user.userId]);  
         }
         
         // save friend doc

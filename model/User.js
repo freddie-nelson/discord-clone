@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema({
         maxlength: 30
     },
     friendRequests: {
-        type: Array,
+        type: Object,
         required: false
     },
     socketId: {
