@@ -13,6 +13,13 @@ const userSchema = new mongoose.Schema({
         min: 1,
         max: 28
     },
+    hash: {
+        type: String,
+        default: () => {
+            return String(Math.floor(Math.random() * 10000)).padStart(4, "0");
+        },
+        required: true,
+    },
     email: {
         type: String,
         required: true,
@@ -24,6 +31,19 @@ const userSchema = new mongoose.Schema({
         required: true,
         min: 6,
         max: 256
+    },
+    friends: {
+        type: Array,
+        required: false,
+        maxlength: 30
+    },
+    friendRequests: {
+        type: Array,
+        required: false
+    },
+    socketId: {
+        type: String,
+        required: false
     }
 })
 

@@ -47,7 +47,7 @@ router.post("/register", async (req, res) => {
   });
 
   try {
-    user.save();
+    await user.save();
     res.status(201).send("Account created successfully.");
   } catch (err) {
     res.status(500).send("Internal server error occurred.");
