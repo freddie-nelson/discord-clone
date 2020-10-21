@@ -31,27 +31,29 @@ export default {
   },
   computed: {
     friends() {
-      return this.$store.state.user.friends || [];
+      return this.objectToArray(this.$store.state.user.friends);
     },
     friendRequests() {
-      const reqs = this.$store.state.user.friendRequests;
-      const arr = [];
-
-      for (const key in reqs) {
-        if (Object.prototype.hasOwnProperty.call(reqs, key)) {
-          arr.push(reqs[key]);
-        }
-      }
-
-      return arr;
+      return this.objectToArray(this.$store.state.user.friendRequests);
     }
   },
   methods: {
     answerRequest(answer) {
-      this.$store.state.socket.emit("answer-friend-request", { userId: answer.userId, accept: answer.accept })
+      this.$store.state.socket.emit("answer-friend-request", { userId: answer.friend.userId, accept: answer.accept })
     },
     openChat(e) {
       console.log(e);
+    },
+    objectToArray(obj) {
+      const arr = [];
+
+      for (const key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+          arr.push(obj[key]);
+        }
+      }
+
+      return arr;
     }
   }
 }

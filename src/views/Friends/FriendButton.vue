@@ -12,7 +12,7 @@
         </button>
         <button class="more" @click="request ? $emit('request', { friend, accept: false }) : null">
           <svg v-if="!request" width="24" height="24"><g fill="none" fill-rule="evenodd"><path d="M24 0v24H0V0z"/><path fill="currentColor" d="M12 16c1.1045695 0 2 .8954305 2 2s-.8954305 2-2 2-2-.8954305-2-2 .8954305-2 2-2zm0-6c1.1045695 0 2 .8954305 2 2s-.8954305 2-2 2-2-.8954305-2-2 .8954305-2 2-2zm0-6c1.1045695 0 2 .8954305 2 2s-.8954305 2-2 2-2-.8954305-2-2 .8954305-2 2-2z"/></g></svg>
-          <img src="../../assets/plus.svg" style="filter: brightness(5); opacity: 0.6; transform: rotate(45deg)" alt="">
+          <img v-else src="../../assets/plus.svg" style="filter: brightness(5); opacity: 0.6; transform: rotate(45deg)" alt="">
         </button>
       </div>
     </div>

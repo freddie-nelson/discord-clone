@@ -11,6 +11,7 @@
 
       </div>
     </div> -->
+    <Toast :toast="toastQueue[0]" />
   </div>
 </template>
 
@@ -18,13 +19,20 @@
 import ServerList from "./components/Server/TheServerList";
 import ChatList from "./components/ChatList/TheChatList";
 import Titlebar from "./components/TheTitlebar";
+import Toast from "./components/TheToast";
 
 export default {
   name: 'App',
   components: {
     ServerList,
     ChatList,
-    Titlebar
+    Titlebar,
+    Toast
+  },
+  computed: {
+    toastQueue() {
+      return this.$store.state.toastQueue;
+    }
   },
   data() {
     return {
@@ -67,6 +75,18 @@ export default {
     socket.on("friend-request", data => {
       console.log("friend-request");
       this.$store.commit("ADD_FRIEND_REQUEST", data);
+    })
+
+    socket.on("answer-friend-request-response", res => {
+      this.$store.commit("ADD_TOAST", res)
+      
+      if (!res.error) {
+        res.accepted ? this.$store.commit("ADD_FRIEND",  res.friend) : this.$store.commit("REMOVE_FRIEND_REQUEST",  res.friend);
+      }
+    });
+
+    socket.on("pending-friend-request-accepted", friend => {
+      this.$store.commit("ADD_FRIEND", friend)
     })
   }
 }
