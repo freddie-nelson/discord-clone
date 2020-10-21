@@ -128,6 +128,12 @@ io.on("connection", async (socket) => {
         console.log(err);
       });
 
+    if (tokenData.userId === friend.userId)
+      return socket.emit("add-friend-response", {
+        error: true,
+        message: "That desperate for a friend are we?",
+      });
+
     if (friend) {
       const user = await User.findOne({ userId: tokenData.userId })
         .then((doc) => {
@@ -144,11 +150,10 @@ io.on("connection", async (socket) => {
       if (user) {
         // check if friend already has a request from user
         if (friend.friendRequests && friend.friendRequests[user.userId]) {
-          socket.emit("add-friend-response", {
+          return socket.emit("add-friend-response", {
             error: true,
-            message: "User already has a friend request from you.",
+            message: "You have already sent a friend request to this user.",
           });
-          return;
         }
 
         // check if user already has a request from friend
@@ -169,11 +174,14 @@ io.on("connection", async (socket) => {
         }
 
         if (!friend.friendRequests) friend.friendRequests = {};
-        friend.friendRequests[user.userId] = {
+        // add friend request to doc
+        const friendRequests = { ...friend.friendRequests }
+        friendRequests[user.userId] = {
           username: user.username,
           hash: user.hash,
           userId: user.userId,
         };
+        friend.friendRequests = friendRequests;
 
         // send alert to friend if they are online
         if (friend.socketId) {
@@ -256,27 +264,31 @@ io.on("connection", async (socket) => {
         });
     }
 
+    // delete friend request from user
+    const friendRequests = { ...user.friendRequests };
+    delete friendRequests[friendUserId];
+    user.friendRequests = friendRequests;
+
     if (accept) {
       if (!user.friends) user.friends = {};
-      user.friends[friendUserId] = {
+      let friends = { ...user.friends };
+      friends[friendUserId] = {
         userId: friend.userId,
         username: friend.username,
         hash: friend.hash,
         initiator: true,
       };
-
-      // delete friend request from user
-      const friendRequests = { ...user.friendRequests };
-      delete friendRequests[friendUserId];
-      user.friendRequests = friendRequests;
+      user.friends = friends;
 
       if (!friend.friends) friend.friends = {};
-      friend.friends[user.userId] = {
+      friends = { ...friend.friends };
+      friends[user.userId] = {
         userId: user.userId,
         username: user.username,
         hash: user.hash,
         initiator: false,
       };
+      friend.friends = friends;
 
       // save user to db
       // saving each doc must be seperate because otherwise this
@@ -315,17 +327,15 @@ io.on("connection", async (socket) => {
           username: friend.username,
           hash: friend.hash,
           initiator: true,
-        }
+        },
       });
     } else {
-      user.friendRequests[friendUserId] = undefined;
-
       try {
         await user.save();
       } catch {
         socket.emit("answer-friend-request-response", {
           error: true,
-          message: "Fatal internal server error occured."
+          message: "Fatal internal server error occured.",
         });
       }
 
@@ -334,9 +344,63 @@ io.on("connection", async (socket) => {
         accepted: false,
         message: "Rejected friend request.",
         friend: {
-          userId: friendUserId
+          userId: friendUserId,
         },
       });
+    }
+  });
+
+  // REMOVE FRIEND 
+  socket.on("remove-friend", async friendUserId => {
+    const tokenData = validateToken(socket.client.request);
+
+    if (tokenData === false) {
+      socket.emit("invalid-token");
+      return;
+    }
+
+    const user = await User.findOne({ userId: tokenData.userId })
+      .then(async doc => {
+        if (doc) {
+          try {
+            const friends = { ...doc.friends };
+            delete friends[friendUserId];
+            doc.friends= friends;
+
+            await doc.save();
+            return doc
+          } catch {
+            socket.emit("remove-friend-response", { error: true, message: "Could not remove friend." });
+          }
+        }
+      })
+      .catch(() => socket.emit("remove-friend-response", { error: true, message: "Internal server error occurred." }))
+
+    if (!user) return;
+
+    const friend = await User.findOne({ userId: friendUserId })
+      .then(async doc => {
+        if (doc) {
+          try {
+            const friends = { ...doc.friends };
+            delete friends[tokenData.userId];
+            doc.friends = friends;
+
+            await doc.save()
+            return doc
+          } catch {
+            socket.emit("remove-friend-response", { error: true, message: "Could not remove friend." });
+          }
+        }
+      })
+      .catch(() => socket.emit("remove-friend-response", { error: true, message: "Internal server error occurred." }))
+
+    if (!friend) return;
+
+    socket.emit("remove-friend-response", { error: false, message: "Removed user from friends list.", userId: friendUserId })
+    
+    if (friend.socketId) {
+      io.to(friend.socketId).emit("remove-friend-response", tokenData.userId)
     }
   });
 });
