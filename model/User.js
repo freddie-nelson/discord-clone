@@ -33,9 +33,8 @@ const userSchema = new mongoose.Schema({
         max: 256
     },
     friends: {
-        type: Array,
-        required: false,
-        maxlength: 30
+        type: Object,
+        required: false
     },
     friendRequests: {
         type: Object,
