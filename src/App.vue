@@ -11,7 +11,7 @@
 
       </div>
     </div> -->
-    <Toast :toast="toastQueue[0]" />
+    <Toast :toast="toastQueue[0]" @next-toast="toastQueue = toastQueue.slice(1, toastQueue.length - 1)" />
   </div>
 </template>
 
@@ -30,8 +30,13 @@ export default {
     Toast
   },
   computed: {
-    toastQueue() {
-      return this.$store.state.toastQueue;
+    toastQueue: {
+      get() {
+        return this.$store.state.toastQueue;
+      },
+      set(val) {
+        this.$store.commit("SET_TOAST_QUEUE", val)
+      }
     }
   },
   data() {
@@ -87,6 +92,15 @@ export default {
 
     socket.on("pending-friend-request-accepted", friend => {
       this.$store.commit("ADD_FRIEND", friend)
+    });
+
+    socket.on("remove-friend-response", res => {
+      if (typeof res === "object") {
+        this.$store.commit("REMOVE_FRIEND", res.userId);
+        this.$store.commit("ADD_TOAST", res);
+      } else {
+        this.$store.commit("REMOVE_FRIEND", res);
+      }
     })
   }
 }

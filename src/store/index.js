@@ -6,7 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     user: {},
-    toastQueue: []
+    toastQueue: [],
   },
   mutations: {
     SET_USER(state, payload) {
@@ -19,12 +19,14 @@ export default new Vuex.Store({
       state.user = user;
     },
     ADD_TOAST(state, toast) {
-      state.toastQueue = [...state.toastQueue, toast]
+      const queue = state.toastQueue;
+      queue.push(toast);
+      state.toastQueue = queue;
     },
     ADD_FRIEND(state, friend) {
       const user = { ...state.user };
 
-      if(!user.friends) user.friends = {};
+      if (!user.friends) user.friends = {};
       user.friends[friend.userId] = friend;
       if (friend.initiator) delete user.friendRequests[friend.userId];
 
@@ -32,10 +34,24 @@ export default new Vuex.Store({
     },
     REMOVE_FRIEND_REQUEST(state, friend) {
       const user = { ...state.user };
-
-      user.friendRequests[friend.userId] = undefined;
-
+      try {
+        delete user.friendRequests[friend.userId];
+      } catch {
+        return;
+      }
       state.user = user;
+    },
+    REMOVE_FRIEND(state, userId) {
+      const user = { ...state.user };
+      try {
+        delete user.friends[userId];
+      } catch {
+        return;
+      }
+      state.user = user;
+    },
+    SET_TOAST_QUEUE(state, queue) {
+      state.toastQueue = queue;
     }
   },
   actions: {},

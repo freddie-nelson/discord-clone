@@ -3,7 +3,7 @@
     <div v-if="friends.length !== 0">
       <h2 class="count">FRIENDS - {{ friends.length }}</h2>
       <div class="friend-list">
-        <FriendButton v-for="friend in friends" :key="friend.id" :friend="friend" @open-chat="openChat" />
+        <FriendButton v-for="friend in friends" :key="friend.id" :friend="friend" @open-chat="openChat" @remove-friend="removeFriend" />
       </div>
     </div>
 
@@ -40,6 +40,9 @@ export default {
   methods: {
     answerRequest(answer) {
       this.$store.state.socket.emit("answer-friend-request", { userId: answer.friend.userId, accept: answer.accept })
+    },
+    removeFriend(friend) {
+      this.$store.state.socket.emit("remove-friend", friend.userId);
     },
     openChat(e) {
       console.log(e);
