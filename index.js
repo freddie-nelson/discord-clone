@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
 const cors = require("cors");
+const { v4: uuid } = require("uuid");
 // const fs = require("fs");
 // const https = require("https");
 
@@ -57,6 +58,7 @@ http.listen(port, () => console.log(`Server listening at http://localhost:${port
 const io = require("socket.io")(http);
 const validateToken = require("./validation/tokenValidation");
 const User = require("./model/User");
+const Chats = require("./model/Chats");
 
 io.on("connection", async (socket) => {
   // ON CONNECTION ----------------------
@@ -127,8 +129,8 @@ io.on("connection", async (socket) => {
       .catch((err) => {
         console.log(err);
       });
-
-    if (tokenData.userId === friend.userId)
+    
+    if (friend && tokenData.userId === friend.userId)
       return socket.emit("add-friend-response", {
         error: true,
         message: "That desperate for a friend are we?",
@@ -144,7 +146,7 @@ io.on("connection", async (socket) => {
           }
         })
         .catch((err) => {
-          console.log(error);
+          console.log(err);
         });
 
       if (user) {
@@ -402,5 +404,53 @@ io.on("connection", async (socket) => {
     if (friend.socketId) {
       io.to(friend.socketId).emit("remove-friend-response", tokenData.userId)
     }
+  });
+
+  socket.on("send-message", async ({ from, to, message }) => {
+    const chatId = from.initiator ? from.userId + to.userId : to.userId + from.userId;
+    
+    let chat;
+    try {
+      chat = await Chats.findOne({ chatId });
+    } catch {
+      return socket.emit("send-message-response", { error: true, message: "Sorry, there was an error finding your chat logs with this user."});
+    }
+
+    // if there is no chat logs for these users then create them
+    if (!chat) {
+      chat = await Chats.create({ chatId });
+    }
+
+    // create message
+    const msgTimestamp = new Date().getTime();
+    const msg = { 
+      text: message, 
+      timestamp: msgTimestamp, 
+      userId: from.userId, 
+      id: uuid().slice(0, 16) 
+    };
+
+    // append new message and save doc to db
+    chat.messages.push(msg);
+    chat.save();
+
+    // send message back to sender
+    socket.emit("receive-message", { ...msg, chatId });
+    
+    // send message to recipitent if they are online
+    const recipient = await User.findOne({ userId: to.userId });
+    if (recipient && recipient.socketId)
+      io.to(recipient.socketId).emit("receive-message", { ...msg, chatId });
+  })
+
+  socket.on("fetch-messages", async chatId => {
+    let chat;
+    try {
+      chat = await Chats.findOne({ chatId });
+    } catch {
+      return socket.emit("fetch-messages-response", { error: true, message: "Sorry, there was an error finding your chat logs with this user."});
+    }
+
+    if (chat) return socket.emit("fetch-messages-response", { error: false, messages: { chatId, logs: chat.messages } });
   });
 });
