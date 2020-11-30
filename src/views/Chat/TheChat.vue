@@ -2,12 +2,12 @@
   <main id="chat">
     <div class="chat-container">
       <div class="chat-list">
-        <div class="scroll-spacer"></div>
-        <ChatItem v-for="(msg, index) in messages" :key="msg.id" :message="msg" :no-icon="messages[index - 1] ? messages[index - 1].user.id === msg.user.id && msg.timestamp - messages[index - 1].timestamp <= 120 : false" />
         <div class="scroll-spacer" style="margin-bottom: 25px;"></div>
+        <ChatItem v-for="(msg, index) in messages" :key="msg.id" :message="msg" :no-icon="messages[index - 1] ? messages[index - 1].user.id === msg.user.id && msg.timestamp - messages[index - 1].timestamp <= 120 : false" />
+        <div class="scroll-spacer"></div>
       </div>
     </div>
-    <MessageBox v-model.trim="message" />
+    <MessageBox v-model.trim="message" @keyup.enter.native="sendMessage" />
   </main>
 </template>
 
@@ -23,23 +23,44 @@ export default {
   },
   data() {
     return {
-      message: "",
-      messages: [
-        // { id: "sidfoauwqa", user: { name: "Freddie", id: "sdjkfhuwiasfdu" }, text: "frick you dude", timestamp: 1602035023718 },
-        // { id: "sdfjsaaaaafkajs", user: { name: "John Doe", id: "asduifeuih" }, text: "pog", timestamp: 1603031023718 }, 
-        // { id: "sdfjsadwasafkajs", user: { name: "John Doe", id: "asduifeuih" }, text: "yo what is up dude this is an epic messsage", timestamp: 1603035022718 }, 
-        // { id: "sdfjasdqqqsafkajs", user: { name: "John Doe", id: "asduifeuih" }, text: "yo what is up dude", timestamp: 1603035023718 },{ id: "sidfoauwqa", user: { name: "Freddie", id: "sdjkfhuwiasfdu" }, text: "frick you dude", timestamp: 1602035023718 },
-        // { id: "sdfjsaaaaafkajs", user: { name: "John Doe", id: "asduifeuih" }, text: "pog", timestamp: 1603031023718 }, 
-        // { id: "sdfjsadwasafkajs", user: { name: "John Doe", id: "asduifeuih" }, text: "yo what is up dude this is an epic messsage", timestamp: 1603035022718 }, 
-        // { id: "sdfjasdqqqsafkajs", user: { name: "John Doe", id: "asduifeuih" }, text: "yo what is up dude", timestamp: 1603035023718 },{ id: "sidfoauwqa", user: { name: "Freddie", id: "sdjkfhuwiasfdu" }, text: "frick you dude", timestamp: 1602035023718 },
-        // { id: "sdfjsaaaaafkajs", user: { name: "John Doe", id: "asduifeuih" }, text: "pog", timestamp: 1603031023718 }, 
-        // { id: "sdfjsadwasafkajs", user: { name: "John Doe", id: "asduifeuih" }, text: "yo what is up dude this is an epic messsage", timestamp: 1603035022718 }, 
-        // { id: "sdfjasdqqqsafkajs", user: { name: "John Doe", id: "asduifeuih" }, text: "yo what is up dude", timestamp: 1603035023718 },{ id: "sidfoauwqa", user: { name: "Freddie", id: "sdjkfhuwiasfdu" }, text: "frick you dude", timestamp: 1602035023718 },
-        // { id: "sdfjsaaaaafkajs", user: { name: "John Doe", id: "asduifeuih" }, text: "pog", timestamp: 1603031023718 }, 
-        // { id: "sdfjsadwasafkajs", user: { name: "John Doe", id: "asduifeuih" }, text: "yo what is up dude this is an epic messsage", timestamp: 1603035022718 }, 
-        // { id: "sdfjasdqqqsafkajs", user: { name: "John Doe", id: "asduifeuih" }, text: "yo what is up dude", timestamp: 1603035023718 }
-      ]
+      message: ""
     }
+  },
+  computed: {
+    messages() {
+      return this.$store.state.messages[this.chatId] || [];
+    },
+    from() {
+      return {
+        userId: this.$store.state.user.userId,
+        initiator: !this.$store.state.user.friends[this.$store.state.chat.userId].initiator
+      }
+    },
+    to() {
+      return {
+        userId: this.$store.state.chat.userId,
+      }
+    },
+    chatId() {
+      return this.from.initiator ? this.from.userId + this.to.userId : this.to.userId + this.from.userId;
+    }
+  },
+  methods: {
+    sendMessage() {
+      if (!this.message) return;
+      
+      this.$store.state.socket.emit("send-message", { from: this.from, to: this.to, message: this.message });
+      this.message = "";
+    },
+    fetchMessages() {
+      this.$store.state.socket.emit("fetch-messages", this.chatId);
+    }
+  },
+  beforeDestroy() {
+    this.$store.commit("SET_CURRENT_CHAT", { chatId: null, userId: null});
+  },
+  mounted() {
+    this.fetchMessages();
   }
 }
 </script>
@@ -49,13 +70,17 @@ export default {
   .chat-container {
     width: 100%;
     height: calc(100vh - 100px);
+    display: flex;
 
     .chat-list {
       overflow-y: scroll;
-      height: 100%;
       padding: 0px 16px;
       display: flex;
-      flex-direction: column-reverse;
+      flex-direction: column;
+      margin-top: auto;
+      width: 100%;
+      height: 100%;
+      justify-content: flex-end;
 
       .scroll-spacer {
         margin-top: 25px;

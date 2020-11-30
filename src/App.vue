@@ -102,6 +102,25 @@ export default {
         this.$store.commit("REMOVE_FRIEND", res);
       }
     })
+
+    // Chat events
+    socket.on("send-message-response", res => {
+      if (res.error) {
+        this.$store.commit("ADD_TOAST", res);
+      }
+    })
+
+    socket.on("receive-message", message => {
+      this.$store.commit("RECEIVE_MESSAGE", message);
+    })
+
+    socket.on("fetch-messages-response", res => {
+      if (res.error) {
+        this.$store.commit("ADD_TOAST", res);
+      } else {
+        this.$store.commit("SET_MESSAGES", res.messages);
+      }
+    })
   }
 }
 </script>

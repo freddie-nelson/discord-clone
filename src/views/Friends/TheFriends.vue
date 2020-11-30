@@ -44,8 +44,18 @@ export default {
     removeFriend(friend) {
       this.$store.state.socket.emit("remove-friend", friend.userId);
     },
-    openChat(e) {
-      console.log(e);
+    openChat(friend) {
+      this.$router.push({
+        name: "Chat",
+        params: {
+          friend: `${friend.username}-${friend.hash}`
+        }
+      });
+
+      const myId = this.$store.state.user.userId;
+      const chatId = friend.initator ? friend.userId + myId : myId + friend.userId;
+
+      this.$store.commit("SET_CURRENT_CHAT", { chatId, userId: friend.userId });
     },
     objectToArray(obj) {
       const arr = [];
@@ -81,6 +91,7 @@ export default {
     flex-direction: column;
     height: 100%;
     padding-top: 40px;
+    text-align: center;
     
     h1 {
       font-size: 2.4em;

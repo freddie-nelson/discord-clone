@@ -6,7 +6,7 @@
     <div class="content">
       <h3 class="name">
         {{ message.user.name }}
-        <span class="timestamp">{{ format(message.timestamp) }}</span>
+        <span class="timestamp">{{ timeago }}</span>
       </h3>
       <p class="message">{{ message.text }}</p>
     </div>
@@ -30,10 +30,27 @@ export default {
       default: false
     }
   },
+  data() {
+    return {
+      timeago: "",
+      refreshTimestampInterval: null
+    }
+  },
   methods: {
     format(time) {
       return format(time);
     }
+  },
+  mounted() {
+    this.timeago = this.format(this.message.timestamp);
+
+    // refresh timestamp
+    this.refreshTimestampInterval = setInterval(() => {
+      this.timeago = this.format(this.message.timestamp);
+    }, 3000)
+  },
+  beforeDestroy() {
+    clearInterval(this.refreshTimestampInterval);
   }
 }
 </script>
@@ -85,6 +102,7 @@ export default {
 
   .content {
     margin-left: 5px;
+    max-width: calc(100% - 60px); // make sure icon doesn't get squished
   }
 }
 </style>

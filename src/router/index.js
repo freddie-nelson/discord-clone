@@ -24,7 +24,7 @@ const routes = [
     component: AddFriend
   },
   {
-    path: "/chat",
+    path: "/chat/:friend",
     name: "Chat",
     component: Chat,
   }
