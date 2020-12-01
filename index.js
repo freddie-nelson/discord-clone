@@ -406,8 +406,8 @@ io.on("connection", async (socket) => {
     }
   });
 
-  socket.on("send-message", async ({ from, to, message }) => {
-    const chatId = from.initiator ? from.userId + to.userId : to.userId + from.userId;
+  async function findChatLogs(from, to) {
+    let chatId = from.initiator ? from.userId + to.userId : to.userId + from.userId;
     
     let chat;
     try {
@@ -416,10 +416,29 @@ io.on("connection", async (socket) => {
       return socket.emit("send-message-response", { error: true, message: "Sorry, there was an error finding your chat logs with this user."});
     }
 
-    // if there is no chat logs for these users then create them
+    // TODO: CHANGE THIS TO A PAST FRIENDSHIPS BASED CHECK THAT HAPPENS ON CLIENT SIDE
+    // AS THIS WILL RESULT IN LESS DB HITS
+    // if there is no chat logs for these check if chat exists from previous friendship
     if (!chat) {
-      chat = await Chats.create({ chatId });
+      chatId = !from.initiator ? from.userId + to.userId : to.userId + from.userId;
+
+      try {
+        chat = await Chats.findOne({ chatId })
+      } catch {
+        return socket.emit("send-message-response", { error: true, message: "Sorry, there was an error finding your chat logs with this user."});  
+      }
+      
+      // if there is still no chat then create it
+      if (!chat) {
+        chat = await Chats.create({ chatId });
+      }
     }
+
+    return { chat, chatId }
+  }
+
+  socket.on("send-message", async ({ from, to, message }) => {
+    const { chat, chatId } = await findChatLogs(from, to);
 
     // create message
     const msgTimestamp = new Date().getTime();
@@ -443,13 +462,8 @@ io.on("connection", async (socket) => {
       io.to(recipient.socketId).emit("receive-message", { ...msg, chatId });
   })
 
-  socket.on("fetch-messages", async chatId => {
-    let chat;
-    try {
-      chat = await Chats.findOne({ chatId });
-    } catch {
-      return socket.emit("fetch-messages-response", { error: true, message: "Sorry, there was an error finding your chat logs with this user."});
-    }
+  socket.on("fetch-messages", async ({ from, to }) => {
+    const { chat, chatId } = await findChatLogs(from, to);
 
     if (chat) return socket.emit("fetch-messages-response", { error: false, messages: { chatId, logs: chat.messages } });
   });
