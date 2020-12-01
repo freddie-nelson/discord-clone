@@ -96,6 +96,8 @@ export default new Vuex.Store({
 
       msgs[messages.chatId] = fixedMsgs;
       state.messages = msgs;
+
+      state.chat = { ...state.chat, chatId: messages.chatId }
     }
   },
   actions: {},

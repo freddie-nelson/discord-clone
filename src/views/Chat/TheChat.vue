@@ -42,7 +42,7 @@ export default {
       }
     },
     chatId() {
-      return this.from.initiator ? this.from.userId + this.to.userId : this.to.userId + this.from.userId;
+      return this.$store.state.chat.chatId
     }
   },
   methods: {
@@ -53,7 +53,7 @@ export default {
       this.message = "";
     },
     fetchMessages() {
-      this.$store.state.socket.emit("fetch-messages", this.chatId);
+      this.$store.state.socket.emit("fetch-messages", { from: this.from, to: this.to });
     }
   },
   beforeDestroy() {
