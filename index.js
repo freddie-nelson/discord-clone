@@ -33,7 +33,7 @@ mongoose
 // Middleware
 app.use(helmet());
 app.use(express.json());
-app.use(cors({ origin: "http://localhost:8080", credentials: true }));
+app.use(cors({ origin: process.env.NODE_ENV === "production" ? "https://discord-clone-freddie.netlify.app/" : "http://localhost:8080", credentials: true }));
 
 // Route Middlewares
 app.use("/auth", authRoute);
