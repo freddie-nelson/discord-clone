@@ -47,23 +47,29 @@ app.use(helmet());
 app.use(express.json());
 app.use(cors(corsConfig));
 
-// Route Middlewares
-app.use("/auth", authRoute);
-
 // cookieParser
 app.use(cookieParser());
 
-// https
-//   .createServer(
-//     {
-//       key: fs.readFileSync("./server.key"),
-//       cert: fs.readFileSync("./server.cert")
-//     },
-//     app
-//   )
-//   .listen(port, () =>
-//     console.log(`Server listening at https://localhost:${port}`)
-//   );
+// Route Middlewares
+app.use("/auth", authRoute);
+
+const history = require("connect-history-api-fallback");
+
+// Middleware for serving '/dist' directory
+const staticFileMiddleware = express.static("client/dist");
+
+// 1st call for unredirected requests
+app.use(staticFileMiddleware);
+
+// Support history api
+app.use(
+  history({
+    index: "/client/dist/index.html",
+  })
+);
+
+// 2nd call for redirected requests
+app.use(staticFileMiddleware);
 
 const http = require("http").createServer(app);
 
