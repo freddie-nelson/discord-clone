@@ -116,7 +116,7 @@ export default {
       this.responseRecieved = true;
 
       if (res.status === 200) {
-        this.$router.push({ name: "Friends" })
+        window.location.assign(window.location.origin)
       }
     },
     switchView() {
