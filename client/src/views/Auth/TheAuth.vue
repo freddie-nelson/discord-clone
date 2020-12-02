@@ -65,7 +65,7 @@ export default {
         return
       }
 
-      const res = await fetch("/auth/register", {
+      const res = await fetch(`${this.$store.state.SERVER_URL}/auth/register`, {
         method: "POST",
         mode: "cors",
         credentials: 'include',
@@ -95,7 +95,7 @@ export default {
         password: this.user.password
       }
 
-      const res = await fetch("/auth/login", {
+      const res = await fetch(`${this.$store.state.SERVER_URL}/auth/login`, {
         method: "POST",
         mode: "cors",
         credentials: "include",
