@@ -15,13 +15,15 @@ if (process.env.NODE_ENV !== "production") {
 const authRoute = require("./routes/auth");
 
 const app = express();
-const port = process.env.NODE_ENV === "production" ? 3000 : 3000;
+const port = process.env.NODE_ENV === "production" ? process.env.PORT : 3000;
 
 const mongoURL =
-  process.env.NODE_ENV === "production" ? "admin:6zm$fMY9*x5QH54Cm*^Zd8ra@mongo:27017" : "127.0.0.1:27017";
+  process.env.NODE_ENV === "production"
+    ? `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_HOSTNAME}`
+    : "mongodb://127.0.0.1:27017";
 
 mongoose
-  .connect(`mongodb://${mongoURL}/discord`, {
+  .connect(`${mongoURL}/discord?retryWrites=true&w=majority`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
