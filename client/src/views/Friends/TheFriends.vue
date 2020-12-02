@@ -55,7 +55,7 @@ export default {
       const myId = this.$store.state.user.userId;
       const chatId = friend.initator ? friend.userId + myId : myId + friend.userId;
 
-      this.$store.commit("SET_CURRENT_CHAT", { chatId, userId: friend.userId });
+      this.$store.commit("SET_CURRENT_CHAT", { chatId, userId: friend.userId, name: friend.username });
     },
     objectToArray(obj) {
       const arr = [];

@@ -65,6 +65,7 @@ export default {
   &.no-icon {
     margin-top: 0px;
     margin-left: 50px;
+    width: auto;
 
     .icon {
       display: none;
@@ -86,18 +87,21 @@ export default {
     border-radius: 50%;
     background-color: #232936;
     font-size: 1.5em;
+    user-select: none;
   }
 
   .name {
     font-weight: 600;
     font-size: .95em;
     line-height: 1.2em;
+    user-select: none;
   }
 
   .timestamp {
     opacity: .7;
     font-size: .85em;
     margin-left: 4px;
+    user-select: none;
   }
 
   .content {

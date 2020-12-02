@@ -7,10 +7,10 @@ const { v4: uuid } = require("uuid");
 // const fs = require("fs");
 // const https = require("https");
 
-if (process.env.NODE_ENV === "production") {
+// if (process.env.NODE_ENV === "production") {
   require("dotenv").config();
   console.log("loaded .env");
-}
+// }
 
 // Import Routes
 const authRoute = require("./routes/auth");
@@ -37,7 +37,7 @@ mongoose
 const corsConfig = {
   origin:
     process.env.NODE_ENV === "production"
-      ? "https://discord-clone-freddie.netlify.app"
+      ? ""
       : "http://localhost:8080",
   credentials: true,
   methods: ["GET", "POST"]

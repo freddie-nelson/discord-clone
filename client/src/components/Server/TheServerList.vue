@@ -1,7 +1,7 @@
 <template>
     <section id="server-list">
         <div class="list">
-            <ServerButton :home="true" @hover="showTooltip" @leave="hideTooltip" />
+            <ServerButton :home="true" @hover="showTooltip" @leave="hideTooltip" @click.native="$route.name !== 'Friends' ? $router.push({ name: 'Friends' }) : null" />
             <div class="seperator"></div>
             <ServerButton v-for="server in servers" :key="server.id" :server="server" @hover="showTooltip" @leave="hideTooltip" style="margin-bottom: 7px;" />
             <ServerButton :add="true" @hover="showTooltip" @leave="hideTooltip" />

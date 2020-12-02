@@ -47,7 +47,7 @@ export default {
   },
   beforeMount() {
     const io = require("socket.io-client");
-    this.$store.state.SERVER_URL = process.env.NODE_ENV === "production" ? "https://discord-clone-freddie.herokuapp.com" : "http://localhost:3000/";
+    this.$store.state.SERVER_URL = process.env.NODE_ENV === "production" ? "https://discord-clone-freddie.herokuapp.com" : "http://localhost:3000";
     const socket = io(this.$store.state.SERVER_URL + "/", { withCredentials: true })
 
     this.$store.state.socket = socket;
@@ -116,6 +116,9 @@ export default {
     })
 
     socket.on("fetch-messages-response", res => {
+      this.title = this.$store.state.chat.username;
+      this.view = "dm";
+
       if (res.error) {
         this.$store.commit("ADD_TOAST", res);
       } else {

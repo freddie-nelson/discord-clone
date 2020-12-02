@@ -58,9 +58,10 @@ export default new Vuex.Store({
     SET_TOAST_QUEUE(state, queue) {
       state.toastQueue = queue;
     },
-    SET_CURRENT_CHAT(state, { chatId, userId }) {
+    SET_CURRENT_CHAT(state, { chatId, userId, name }) {
       state.chat.chatId = chatId;
       state.chat.userId = userId;
+      state.chat.username = name;
     },
     RECEIVE_MESSAGE(state, message) {
       const messages = { ...state.messages };
@@ -68,7 +69,8 @@ export default new Vuex.Store({
 
       const msg = {
         user: {
-          name
+          name,
+          id: message.userId
         },
         id: message.id,
         text: message.text,
@@ -87,6 +89,7 @@ export default new Vuex.Store({
         return {
           user: {
             name,
+            id: msg.userId,
           },
           id: msg.id,
           text: msg.text,
