@@ -18,13 +18,15 @@ const authRoute = require("./routes/auth");
 const app = express();
 const port = process.env.NODE_ENV === "production" ? process.env.PORT : 3000;
 
-const mongoURL =
+const MONGO_URL =
   process.env.NODE_ENV === "production"
     ? `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_HOSTNAME}`
     : "mongodb://127.0.0.1:27017";
 
+console.log(MONGO_URL)
+
 mongoose
-  .connect(`${mongoURL}/discord?retryWrites=true&w=majority`, {
+  .connect(`${MONGO_URL}/discord?retryWrites=true&w=majority`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
