@@ -48,7 +48,7 @@ export default {
   beforeMount() {
     const io = require("socket.io-client");
     const SERVER_URL = process.env.NODE_ENV === "production" ? "https://discord-clone-freddie.herokuapp.com/" : "http://localhost:3000/";
-    const socket = io(SERVER_URL)
+    const socket = io(SERVER_URL, { withCredentials: true })
 
     this.$store.state.socket = socket;
 

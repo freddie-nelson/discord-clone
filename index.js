@@ -31,9 +31,18 @@ mongoose
   .catch((err) => console.log(err));
 
 // Middleware
+const corsConfig = {
+  origin:
+    process.env.NODE_ENV === "production"
+      ? "https://discord-clone-freddie.netlify.app/"
+      : "http://localhost:8080",
+  credentials: true,
+  methods: ["GET", "POST"]
+};
+
 app.use(helmet());
 app.use(express.json());
-app.use(cors({ origin: process.env.NODE_ENV === "production" ? "https://discord-clone-freddie.netlify.app/" : "http://localhost:8080", credentials: true }));
+app.use(cors(corsConfig));
 
 // Route Middlewares
 app.use("/auth", authRoute);
@@ -57,7 +66,7 @@ const http = require("http").createServer(app);
 
 http.listen(port, () => console.log(`Server listening at http://localhost:${port}`));
 
-const io = require("socket.io")(http);
+const io = require("socket.io")(http, corsConfig);
 const validateToken = require("./validation/tokenValidation");
 const User = require("./model/User");
 const Chats = require("./model/Chats");
