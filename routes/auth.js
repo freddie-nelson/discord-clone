@@ -31,7 +31,7 @@ router.post("/register", async (req, res) => {
   } else if (emailExists === "error") {
     return res
       .status(500)
-      .send("Could not register user at this time.");;
+      .send("Could not register user at this time.");
   }
 
   // Hash password
