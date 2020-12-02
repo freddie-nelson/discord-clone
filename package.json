@@ -1,17 +1,23 @@
 {
-  "name": "mustap-api",
-  "version": "1.0.0",
-  "description": "Express REST API for mustap.me",
-  "main": "index.js",
+  "name": "discord-clone",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "start": "node index.js",
-    "start-production": "pm2-runtime index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon ."
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
   },
-  "author": "",
-  "license": "ISC",
+  "main": "index.js",
   "dependencies": {
+    "core-js": "^3.6.5",
+    "sass": "^1.27.0",
+    "sass-loader": "^10.0.3",
+    "socket.io-client": "^2.3.1",
+    "timeago.js": "^4.0.2",
+    "vue": "^2.6.11",
+    "vue-icon": "^2.1.2",
+    "vue-router": "^3.2.0",
+    "vuex": "^3.4.0",
     "@hapi/joi": "^17.1.1",
     "bcryptjs": "^2.4.3",
     "cookie": "^0.4.1",
@@ -26,5 +32,35 @@
     "nodemon": "^2.0.6",
     "socket.io": "^2.3.0",
     "uuid": "^8.1.0"
-  }
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-vuex": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
 }
