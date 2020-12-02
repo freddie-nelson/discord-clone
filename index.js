@@ -258,7 +258,7 @@ io.on("connection", async (socket) => {
           }
         })
         .catch((err) => {
-          console.log(error);
+          console.log(err);
         });
 
       if (!friend)
