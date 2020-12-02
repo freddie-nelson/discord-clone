@@ -1,6 +1,7 @@
 const path = require("path");
 
 module.exports = {
+  outputDir: "client/dist",
   pages: {
     index: {
       entry: "client/src/main.js",
