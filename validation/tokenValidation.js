@@ -3,7 +3,7 @@ const cookie = require("cookie");
 
 function validate(req) {
     try {
-        const cookies = cookie.parse(req.headers.cookie);
+        const cookies = cookie.parse(req.headers.cookie || "");
 
         if (cookies.token && jwt.verify(cookies.token, process.env.TOKEN_SECRET)) {
             return jwt.decode(cookies.token);
