@@ -34,7 +34,7 @@ mongoose
 const corsConfig = {
   origin:
     process.env.NODE_ENV === "production"
-      ? "https://discord-clone-freddie.netlify.app/"
+      ? "https://discord-clone-freddie.netlify.app"
       : "http://localhost:8080",
   credentials: true,
   methods: ["GET", "POST"]
