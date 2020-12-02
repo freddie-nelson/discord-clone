@@ -8,7 +8,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "dev": "nodemon .",
-    "start": "vue-cli-service build && node ."
+    "start": "node ."
   },
   "main": "index.js",
   "dependencies": {
