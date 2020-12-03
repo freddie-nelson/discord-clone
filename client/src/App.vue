@@ -12,6 +12,7 @@
       </div>
     </div> -->
     <Toast :toast="toastQueue[0]" @next-toast="toastQueue = toastQueue.slice(1, toastQueue.length - 1)" />
+    <Modal />
   </div>
 </template>
 
@@ -20,6 +21,7 @@ import ServerList from "./components/Server/TheServerList";
 import ChatList from "./components/ChatList/TheChatList";
 import Titlebar from "./components/TheTitlebar";
 import Toast from "./components/TheToast";
+import Modal from "./components/TheModal";
 
 export default {
   name: 'App',
@@ -27,7 +29,8 @@ export default {
     ServerList,
     ChatList,
     Titlebar,
-    Toast
+    Toast,
+    Modal
   },
   computed: {
     toastQueue: {
