@@ -12,7 +12,7 @@
       </div>
     </div> -->
     <Toast :toast="toastQueue[0]" @next-toast="toastQueue = toastQueue.slice(1, toastQueue.length - 1)" />
-    <Modal />
+    <Modal v-if="$store.state.modal.show"/>
   </div>
 </template>
 

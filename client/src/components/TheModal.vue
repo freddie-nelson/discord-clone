@@ -2,14 +2,18 @@
   <div class="modal-container">
     <div class="modal">
       <h1>{{ title }}</h1>
-      <p>{{ description }}</p>
-      <label for="">input box</label>
-      <input type="text">
+      <p>{{ description }}</p> 
+      <form @submit.prevent="submitModal">
+        <div class="input" v-for="(input) in inputs" :key="input.label">
+        <label for="">{{ input.label }}</label>
+        <input :required="input.required" type="text" v-model="results[input.key]">
+      </div>
 
       <div class="buttons">
-        <button class="decline">{{ btnDecline.text }}</button>
-        <button class="confirm">{{ btnConfirm.text }}</button>
-      </div>  
+        <button class="decline" type="button" @click="closeModal">{{ btnDecline.text }}</button>
+        <button class="confirm" type="submit">{{ btnConfirm.text }}</button>
+      </div> 
+      </form> 
     </div>
   </div>
 </template>
@@ -41,6 +45,26 @@ export default {
           text: "Decline"
         }
       }
+    },
+    inputs: {
+      type: Array,
+      default() {
+        return [ { label: "Example Input", key: "exampleInput", required: true } ]
+      }
+    }
+  },
+  data() {
+    return {
+      results: {}
+    }
+  },
+  methods: {
+    submitModal() {
+      this.$store.commit("MODAL_RESULTS", this.results);
+      this.closeModal();
+    },
+    closeModal() {
+      this.$store.commit("SHOW_MODAL", false);
     }
   }
 }
