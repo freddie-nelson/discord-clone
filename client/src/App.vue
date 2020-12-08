@@ -11,8 +11,16 @@
 
       </div>
     </div> -->
-    <Toast :toast="toastQueue[0]" @next-toast="toastQueue = toastQueue.slice(1, toastQueue.length - 1)" />
-    <Modal v-if="$store.state.modal.show"/>
+    <Toast
+      :toast="toastQueue[0]"
+      @next-toast="toastQueue = toastQueue.slice(1, toastQueue.length - 1)"
+    />
+    <Modal
+      v-if="$store.state.modal.show"
+      :inputs="$store.state.modal.inputs"
+      :description="$store.state.modal.description"
+      :title="$store.state.modal.title"
+    />
   </div>
 </template>
 
@@ -24,13 +32,13 @@ import Toast from "./components/TheToast";
 import Modal from "./components/TheModal";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     ServerList,
     ChatList,
     Titlebar,
     Toast,
-    Modal
+    Modal,
   },
   computed: {
     toastQueue: {
@@ -38,87 +46,94 @@ export default {
         return this.$store.state.toastQueue;
       },
       set(val) {
-        this.$store.commit("SET_TOAST_QUEUE", val)
-      }
-    }
+        this.$store.commit("SET_TOAST_QUEUE", val);
+      },
+    },
   },
   data() {
     return {
       view: "friends",
-      title: "Friends"
-    }
+      title: "Friends",
+    };
   },
   beforeMount() {
     const io = require("socket.io-client");
-    this.$store.state.SERVER_URL = process.env.NODE_ENV === "production" ? "https://discord-clone-freddie.herokuapp.com" : "http://localhost:3000";
-    const socket = io(this.$store.state.SERVER_URL + "/", { withCredentials: true })
+    this.$store.state.SERVER_URL =
+      process.env.NODE_ENV === "production"
+        ? "https://discord-clone-freddie.herokuapp.com"
+        : "http://localhost:3000";
+    const socket = io(this.$store.state.SERVER_URL + "/", {
+      withCredentials: true,
+    });
 
     this.$store.state.socket = socket;
 
     // connect and disconnect events
     socket.on("connect", () => {
-      console.log("connected to socket")
-    })
+      console.log("connected to socket");
+    });
 
     socket.on("disconnect", () => {
       console.log("disconnected from socket");
-    })
+    });
 
     // Authentication events
-    socket.on("authenticated", data => {
+    socket.on("authenticated", (data) => {
       console.log("authenticated");
       this.$store.commit("SET_USER", data);
 
       if (this.$route.name !== "Friends") {
-        this.$router.push({ name: "Friends" })
+        this.$router.push({ name: "Friends" });
       }
-    })
+    });
 
     socket.on("not-authenticated", () => {
       if (this.$route.name !== "Auth") {
-        this.$router.push({ name: "Auth" })
+        this.$router.push({ name: "Auth" });
       }
-    })
+    });
 
     // Friend events
-    socket.on("friend-request", data => {
+    socket.on("friend-request", (data) => {
       console.log("friend-request");
       this.$store.commit("ADD_FRIEND_REQUEST", data);
-    })
+    });
 
-    socket.on("answer-friend-request-response", res => {
-      this.$store.commit("ADD_TOAST", res)
-      
+    socket.on("answer-friend-request-response", (res) => {
+      this.$store.commit("ADD_TOAST", res);
+
       if (!res.error) {
-        res.accepted ? this.$store.commit("ADD_FRIEND",  res.friend) : this.$store.commit("REMOVE_FRIEND_REQUEST",  res.friend);
+        res.accepted
+          ? this.$store.commit("ADD_FRIEND", res.friend)
+          : this.$store.commit("REMOVE_FRIEND_REQUEST", res.friend);
       }
     });
 
-    socket.on("pending-friend-request-accepted", friend => {
-      this.$store.commit("ADD_FRIEND", friend)
+    socket.on("pending-friend-request-accepted", (friend) => {
+      this.$store.commit("ADD_FRIEND", friend);
     });
 
-    socket.on("remove-friend-response", res => {
+    socket.on("remove-friend-response", (res) => {
       if (typeof res === "object") {
         this.$store.commit("REMOVE_FRIEND", res.userId);
         this.$store.commit("ADD_TOAST", res);
       } else {
         this.$store.commit("REMOVE_FRIEND", res);
       }
-    })
+    });
 
     // Chat events
-    socket.on("send-message-response", res => {
+    socket.on("send-message-response", (res) => {
       if (res.error) {
         this.$store.commit("ADD_TOAST", res);
       }
-    })
+    });
 
-    socket.on("receive-message", message => {
+    socket.on("receive-message", (message) => {
       this.$store.commit("RECEIVE_MESSAGE", message);
-    })
+    });
 
-    socket.on("fetch-messages-response", res => {
+    socket.on("fetch-messages-response", (res) => {
       this.title = this.$store.state.chat.username;
       this.view = "dm";
 
@@ -127,43 +142,43 @@ export default {
       } else {
         this.$store.commit("SET_MESSAGES", res.messages);
       }
-    })
-  }
-}
+    });
+  },
+};
 </script>
 
 <style lang="scss">
 /* Whitney font face to match Discord */
 @font-face {
-    font-family: Whitney;
-    font-style: light;
-    font-weight: 300;
-    src: url("./assets/whitney-light.woff") format('woff');
+  font-family: Whitney;
+  font-style: light;
+  font-weight: 300;
+  src: url("./assets/whitney-light.woff") format("woff");
 }
 @font-face {
-    font-family: Whitney;
-    font-style: normal;
-    font-weight: 500;
-    src: url("./assets/whitney.woff") format('woff');
+  font-family: Whitney;
+  font-style: normal;
+  font-weight: 500;
+  src: url("./assets/whitney.woff") format("woff");
 }
 @font-face {
-    font-family: Whitney;
-    font-style: medium;
-    font-weight: 600;
-    src: url("./assets/whitney-medium.woff") format('woff');
+  font-family: Whitney;
+  font-style: medium;
+  font-weight: 600;
+  src: url("./assets/whitney-medium.woff") format("woff");
 }
 @font-face {
-    font-family: Whitney;
-    font-style: bold;
-    font-weight: 700;
-    src: url("./assets/whitney-bold.woff") format('woff');
+  font-family: Whitney;
+  font-style: bold;
+  font-weight: 700;
+  src: url("./assets/whitney-bold.woff") format("woff");
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: Whitney, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: Whitney, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 #app {
@@ -176,7 +191,7 @@ export default {
 div#main {
   width: calc(100vw - 297px);
   height: 100%;
-  background-color: #181C25;
+  background-color: #181c25;
   display: flex;
   flex-direction: column;
 }

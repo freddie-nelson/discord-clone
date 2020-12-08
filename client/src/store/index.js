@@ -6,9 +6,12 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     modal: {
-      show: true,
-      callback: null,
-      results: {}
+      show: false,
+      callback: undefined,
+      results: {},
+      title: undefined,
+      description: undefined,
+      inputs: undefined
     },
     user: {},
     messages: {},
@@ -107,10 +110,13 @@ export default new Vuex.Store({
 
       state.chat = { ...state.chat, chatId: messages.chatId }
     },
+    MODAL_DETAILS(state, details) {
+      state.modal = { ...state.modal, ...details };
+    },
     SHOW_MODAL(state, show) {
       // if callback function is provided then add it to modal object
       if (typeof show === "object") {
-        state.modal = { ...state.modal, ...show }
+        state.modal = { ...state.modal, ...show };
       } else {
         state.modal = { ...state.modal, show };
       }
